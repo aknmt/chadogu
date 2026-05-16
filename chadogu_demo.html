@@ -247,103 +247,128 @@
   .tag-furo { background: #fdf0e0; color: var(--season-furo); border: 1px solid rgba(196,122,42,0.2); }
   .tag-season { background: var(--paper-warm); color: var(--ink-muted); border: 1px solid var(--border); }
 
-  /* DETAIL PANEL */
+  /* DETAIL MODAL */
+  .detail-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,22,18,0.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .detail-overlay.open { display: flex; }
+
   .detail-pane {
-    width: 400px;
-    min-width: 400px;
     background: white;
-    border-left: 1px solid var(--border);
+    border-radius: 4px;
+    width: 100%;
+    max-width: 1000px;
+    max-height: calc(100vh - 48px);
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+    position: relative;
+  }
+  .detail-pane.hidden { display: none; }
+
+  /* 左：写真エリア */
+  .detail-photos {
+    width: 55%;
+    flex-shrink: 0;
+    background: var(--paper-mid);
     display: flex;
     flex-direction: column;
-    position: sticky;
-    top: 64px;
-    height: calc(100vh - 130px);
-    overflow-y: auto;
-    transition: width 0.3s;
-  }
-  .detail-pane.hidden { width: 0; min-width: 0; overflow: hidden; border: none; }
-
-  .detail-photos {
     position: relative;
-    background: var(--paper-mid);
   }
   .detail-main-photo {
     width: 100%;
-    aspect-ratio: 4/3;
+    flex: 1;
     object-fit: contain;
     display: block;
     background: var(--paper-mid);
+    min-height: 0;
+    max-height: calc(100vh - 180px);
   }
   .detail-main-placeholder {
     width: 100%;
-    aspect-ratio: 4/3;
+    flex: 1;
     background: var(--paper-mid);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 64px;
+    font-size: 96px;
     color: var(--ink-faint);
+    min-height: 300px;
   }
   .detail-thumbs {
     display: flex;
     gap: 6px;
     padding: 10px 12px;
     background: var(--paper-warm);
-    border-bottom: 1px solid var(--border);
+    border-top: 1px solid var(--border);
     overflow-x: auto;
+    flex-shrink: 0;
   }
   .thumb {
-    width: 52px;
-    height: 52px;
+    width: 64px;
+    height: 64px;
     object-fit: cover;
     border-radius: 2px;
     cursor: pointer;
-    opacity: 0.6;
+    opacity: 0.55;
     border: 2px solid transparent;
     flex-shrink: 0;
     background: var(--paper-mid);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: 20px;
     color: var(--ink-faint);
   }
   .thumb.active { opacity: 1; border-color: var(--accent); }
   .thumb:hover { opacity: 0.85; }
 
-  .detail-body { padding: 24px; flex: 1; }
-  .detail-id { font-size: 11px; color: var(--ink-faint); letter-spacing: 1.5px; margin-bottom: 6px; }
+  /* 右：情報エリア */
+  .detail-body {
+    flex: 1;
+    padding: 32px 28px;
+    overflow-y: auto;
+  }
+  .detail-id { font-size: 11px; color: var(--ink-faint); letter-spacing: 1.5px; margin-bottom: 8px; }
   .detail-name {
     font-family: 'Shippori Mincho', serif;
-    font-size: 26px;
+    font-size: 28px;
     font-weight: 600;
     color: var(--ink);
     line-height: 1.2;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
   .detail-mei {
     font-family: 'Shippori Mincho', serif;
-    font-size: 16px;
+    font-size: 18px;
     color: var(--accent);
-    margin-bottom: 16px;
+    margin-bottom: 20px;
   }
-  .detail-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+  .detail-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 24px; }
   .tag-lg { font-size: 11px; padding: 4px 10px; border-radius: 2px; letter-spacing: 0.5px; }
 
-  .detail-section { margin-bottom: 20px; }
+  .detail-section { margin-bottom: 24px; }
   .detail-section-title {
     font-size: 10px;
     letter-spacing: 2px;
     color: var(--ink-faint);
     text-transform: uppercase;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     padding-bottom: 6px;
     border-bottom: 1px solid var(--border);
   }
   .detail-row {
     display: flex;
     gap: 12px;
-    padding: 6px 0;
+    padding: 7px 0;
     border-bottom: 1px solid rgba(0,0,0,0.04);
     font-size: 13px;
   }
@@ -367,20 +392,21 @@
     position: absolute;
     top: 12px;
     right: 12px;
-    width: 32px;
-    height: 32px;
-    background: rgba(0,0,0,0.4);
+    width: 36px;
+    height: 36px;
+    background: rgba(0,0,0,0.45);
     border: none;
     border-radius: 50%;
     color: white;
-    font-size: 16px;
+    font-size: 18px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 10;
+    transition: background 0.15s;
   }
-  .close-btn:hover { background: rgba(0,0,0,0.6); }
+  .close-btn:hover { background: rgba(0,0,0,0.65); }
 
   .empty-state {
     display: flex;
@@ -411,9 +437,12 @@
     .header-inner { padding: 0 16px; }
     .filter-bar { padding: 10px 16px; }
     .grid-pane { padding: 20px 16px; }
-    .detail-pane { width: 100%; min-width: 100%; position: fixed; top: 0; left: 0; height: 100vh; z-index: 200; }
-    .detail-pane.hidden { display: none; }
     .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+    .detail-overlay { padding: 0; align-items: flex-end; }
+    .detail-pane { flex-direction: column; max-width: 100%; width: 100%; max-height: 92vh; border-radius: 12px 12px 0 0; }
+    .detail-photos { width: 100%; max-height: 50vw; }
+    .detail-main-photo { max-height: 50vw; }
+    .detail-thumbs { order: 3; border-top: 1px solid var(--border); border-bottom: none; }
   }
 </style>
 </head>
@@ -455,13 +484,15 @@
       <p>該当する道具が見つかりません</p>
     </div>
   </div>
+</div>
 
-  <div class="detail-pane hidden" id="detailPane">
+<!-- 詳細モーダル -->
+<div class="detail-overlay" id="detailOverlay" onclick="handleOverlayClick(event)">
+  <div class="detail-pane" id="detailPane">
     <div class="detail-photos" id="detailPhotos">
       <button class="close-btn" onclick="closeDetail()">✕</button>
       <div class="detail-main-placeholder" id="detailMainPhoto">🫖</div>
     </div>
-    <div class="detail-thumbs" id="detailThumbs"></div>
     <div class="detail-body">
       <div class="detail-id" id="detailId"></div>
       <div class="detail-name" id="detailName"></div>
@@ -483,10 +514,11 @@
         <div class="detail-row"><div class="detail-val" id="detailBiko"></div></div>
       </div>
     </div>
+    <div class="detail-thumbs" id="detailThumbs"></div>
   </div>
 </div>
 
-<div class="watermark">蔵帳 ∙ demo</div>
+<div class="watermark">蔵帳</div>
 
 <script>
 // ═══════════════════════════════════════════════
@@ -784,14 +816,23 @@ function selectItem(id) {
     ).join('');
   }
 
-  const pane = document.getElementById('detailPane');
-  pane.classList.remove('hidden');
+  const overlay = document.getElementById('detailOverlay');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 
 function closeDetail() {
-  document.getElementById('detailPane').classList.add('hidden');
+  document.getElementById('detailOverlay').classList.remove('open');
+  document.body.style.overflow = '';
   document.querySelectorAll('.item-card').forEach(c => c.classList.remove('selected'));
 }
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('detailOverlay')) closeDetail();
+}
+
+// ESCキーでも閉じる
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
 
 // Init：スプレッドシートからデータ読み込み
 loadData();
