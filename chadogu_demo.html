@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>茶道具 蔵帳</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;600&family=Shippori+Mincho:wght@400;500;600&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1612;
+    --ink-light: #4a4035;
+    --ink-muted: #8a7e72;
+    --ink-faint: #c8bfb4;
+    --paper: #f5f0e8;
+    --paper-warm: #ede6d8;
+    --paper-mid: #e0d8c8;
+    --accent: #8b4513;
+    --accent-light: #c4773a;
+    --accent-pale: #f0e4d4;
+    --season-ro: #4a6741;
+    --season-furo: #c47a2a;
+    --season-all: #5a6878;
+    --border: rgba(26,22,18,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 0 32px;
+    height: 64px;
+  }
+  .logo {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 6px;
+    color: var(--paper);
+    white-space: nowrap;
+  }
+  .logo span {
+    color: var(--accent-light);
+    font-size: 11px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    letter-spacing: 2px;
+    display: block;
+    margin-top: 1px;
+  }
+  .header-divider { width: 1px; height: 32px; background: rgba(255,255,255,0.15); }
+  .search-wrap {
+    flex: 1;
+    max-width: 400px;
+    position: relative;
+  }
+  .search-wrap input {
+    width: 100%;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 4px;
+    padding: 8px 36px 8px 14px;
+    color: var(--paper);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-wrap input::placeholder { color: rgba(255,255,255,0.35); }
+  .search-wrap input:focus { border-color: var(--accent-light); }
+  .search-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255,255,255,0.4);
+    font-size: 14px;
+  }
+  .header-count {
+    color: rgba(255,255,255,0.5);
+    font-size: 12px;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+  .header-count strong { color: var(--accent-light); }
+
+  /* FILTER BAR */
+  .filter-bar {
+    background: var(--paper-warm);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 32px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .filter-label {
+    font-size: 11px;
+    color: var(--ink-muted);
+    letter-spacing: 1px;
+    margin-right: 4px;
+  }
+  .filter-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--ink-light);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-btn.active { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .filter-sep { width: 1px; height: 20px; background: var(--border); margin: 0 4px; }
+  .season-ro { --s-color: var(--season-ro); }
+  .season-furo { --s-color: var(--season-furo); }
+  .season-btn {
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--ink-light);
+  }
+  .season-btn.active-ro { background: var(--season-ro); border-color: var(--season-ro); color: #fff; }
+  .season-btn.active-furo { background: var(--season-furo); border-color: var(--season-furo); color: #fff; }
+  .season-btn.active-all { background: var(--season-all); border-color: var(--season-all); color: #fff; }
+  .season-btn:hover { border-color: var(--ink-muted); color: var(--ink); }
+
+  /* MAIN LAYOUT */
+  .main { display: flex; gap: 0; min-height: calc(100vh - 130px); }
+
+  /* GRID */
+  .grid-pane {
+    flex: 1;
+    padding: 28px 32px;
+    overflow-y: auto;
+  }
+  .grid-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .grid-title {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: var(--ink-muted);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .item-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    overflow: hidden;
+    position: relative;
+  }
+  .item-card:hover {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    transform: translateY(-2px);
+    border-color: var(--accent-light);
+  }
+  .item-card.selected {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+  .card-photo {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+    background: var(--paper-mid);
+  }
+  .card-photo-placeholder {
+    width: 100%;
+    aspect-ratio: 1;
+    background: var(--paper-mid);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: var(--ink-faint);
+  }
+  .card-body { padding: 12px 14px 14px; }
+  .card-id { font-size: 10px; color: var(--ink-faint); letter-spacing: 1px; margin-bottom: 4px; }
+  .card-name {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card-mei {
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+  .tag {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 2px;
+    letter-spacing: 0.5px;
+  }
+  .tag-cat { background: var(--accent-pale); color: var(--accent); border: 1px solid rgba(139,69,19,0.2); }
+  .tag-ro { background: #e8f0e8; color: var(--season-ro); border: 1px solid rgba(74,103,65,0.2); }
+  .tag-furo { background: #fdf0e0; color: var(--season-furo); border: 1px solid rgba(196,122,42,0.2); }
+  .tag-season { background: var(--paper-warm); color: var(--ink-muted); border: 1px solid var(--border); }
+
+  /* DETAIL PANEL */
+  .detail-pane {
+    width: 400px;
+    min-width: 400px;
+    background: white;
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 64px;
+    height: calc(100vh - 130px);
+    overflow-y: auto;
+    transition: width 0.3s;
+  }
+  .detail-pane.hidden { width: 0; min-width: 0; overflow: hidden; border: none; }
+
+  .detail-photos {
+    position: relative;
+    background: var(--paper-mid);
+  }
+  .detail-main-photo {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: contain;
+    display: block;
+    background: var(--paper-mid);
+  }
+  .detail-main-placeholder {
+    width: 100%;
+    aspect-ratio: 4/3;
+    background: var(--paper-mid);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+    color: var(--ink-faint);
+  }
+  .detail-thumbs {
+    display: flex;
+    gap: 6px;
+    padding: 10px 12px;
+    background: var(--paper-warm);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  .thumb {
+    width: 52px;
+    height: 52px;
+    object-fit: cover;
+    border-radius: 2px;
+    cursor: pointer;
+    opacity: 0.6;
+    border: 2px solid transparent;
+    flex-shrink: 0;
+    background: var(--paper-mid);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: var(--ink-faint);
+  }
+  .thumb.active { opacity: 1; border-color: var(--accent); }
+  .thumb:hover { opacity: 0.85; }
+
+  .detail-body { padding: 24px; flex: 1; }
+  .detail-id { font-size: 11px; color: var(--ink-faint); letter-spacing: 1.5px; margin-bottom: 6px; }
+  .detail-name {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .detail-mei {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 16px;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  .detail-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+  .tag-lg { font-size: 11px; padding: 4px 10px; border-radius: 2px; letter-spacing: 0.5px; }
+
+  .detail-section { margin-bottom: 20px; }
+  .detail-section-title {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .detail-row {
+    display: flex;
+    gap: 12px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    font-size: 13px;
+  }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-key { color: var(--ink-muted); min-width: 80px; flex-shrink: 0; }
+  .detail-val { color: var(--ink); font-weight: 400; }
+
+  .hakogaki-box {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 14px;
+    font-family: 'Shippori Mincho', serif;
+    font-size: 14px;
+    color: var(--ink-light);
+    line-height: 1.8;
+    margin-top: 6px;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    background: rgba(0,0,0,0.4);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+  .close-btn:hover { background: rgba(0,0,0,0.6); }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    gap: 12px;
+    color: var(--ink-faint);
+  }
+  .empty-state .icon { font-size: 48px; }
+  .empty-state p { font-size: 13px; }
+
+  /* WATERMARK */
+  .watermark {
+    position: fixed;
+    bottom: 20px;
+    right: 24px;
+    font-family: 'Shippori Mincho', serif;
+    font-size: 11px;
+    color: var(--ink-faint);
+    letter-spacing: 2px;
+    pointer-events: none;
+    z-index: 50;
+  }
+
+  @media (max-width: 768px) {
+    .header-inner { padding: 0 16px; }
+    .filter-bar { padding: 10px 16px; }
+    .grid-pane { padding: 20px 16px; }
+    .detail-pane { width: 100%; min-width: 100%; position: fixed; top: 0; left: 0; height: 100vh; z-index: 200; }
+    .detail-pane.hidden { display: none; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">蔵 帳<span>茶道具データベース</span></div>
+    <div class="header-divider"></div>
+    <div class="search-wrap">
+      <input type="text" id="searchInput" placeholder="道具名、作者、銘で検索…" oninput="applyFilters()">
+      <span class="search-icon">🔍</span>
+    </div>
+    <div class="header-count">表示中 <strong id="countDisp">0</strong> 点</div>
+  </div>
+</header>
+
+<div class="filter-bar">
+  <span class="filter-label">分類</span>
+  <div id="catFilterBar" style="display:contents">
+    <button class="filter-btn active" onclick="setCatFilter('all', this)">すべて</button>
+  </div>
+  <div class="filter-sep"></div>
+  <span class="filter-label">時期</span>
+  <button class="season-btn" id="btnRo" onclick="setSeasonFilter('炉', this)">炉（11〜4月）</button>
+  <button class="season-btn" id="btnFuro" onclick="setSeasonFilter('風炉', this)">風炉（5〜10月）</button>
+  <button class="season-btn" id="btnAll" onclick="setSeasonFilter('通年', this)">通年</button>
+  <button class="season-btn" id="btnNone" onclick="setSeasonFilter('all', this)">指定なし</button>
+</div>
+
+<div class="main">
+  <div class="grid-pane" id="gridPane">
+    <div class="grid-header">
+      <span class="grid-title">道具一覧</span>
+    </div>
+    <div class="grid" id="itemGrid"></div>
+    <div id="emptyState" class="empty-state" style="display:none">
+      <div class="icon">🍵</div>
+      <p>該当する道具が見つかりません</p>
+    </div>
+  </div>
+
+  <div class="detail-pane hidden" id="detailPane">
+    <div class="detail-photos" id="detailPhotos">
+      <button class="close-btn" onclick="closeDetail()">✕</button>
+      <div class="detail-main-placeholder" id="detailMainPhoto">🫖</div>
+    </div>
+    <div class="detail-thumbs" id="detailThumbs"></div>
+    <div class="detail-body">
+      <div class="detail-id" id="detailId"></div>
+      <div class="detail-name" id="detailName"></div>
+      <div class="detail-mei" id="detailMei"></div>
+      <div class="detail-tags" id="detailTags"></div>
+
+      <div class="detail-section">
+        <div class="detail-section-title">道具情報</div>
+        <div id="detailInfo"></div>
+      </div>
+
+      <div class="detail-section" id="hakogakiSection">
+        <div class="detail-section-title">箱書き・書き付け</div>
+        <div class="hakogaki-box" id="detailHakogaki"></div>
+      </div>
+
+      <div class="detail-section" id="bikoSection">
+        <div class="detail-section-title">備考</div>
+        <div class="detail-row"><div class="detail-val" id="detailBiko"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="watermark">蔵帳 ∙ demo</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// Google Sheets CSV URLs
+// ═══════════════════════════════════════════════
+const SHEET1_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSbGatDjAElc7ubPzuErOjAPANUob2LS4spiUMncSAJxBNfvi65oRBLOgUiVRhmvOIXlg_t5E79-NM-/pub?gid=0&single=true&output=csv';
+const SHEET2_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSbGatDjAElc7ubPzuErOjAPANUob2LS4spiUMncSAJxBNfvi65oRBLOgUiVRhmvOIXlg_t5E79-NM-/pub?gid=508253223&single=true&output=csv';
+
+// グローバルデータ
+let data = [];
+let photoData = [];
+
+// ───────────────────────────────────────────
+// CSV パーサー（ダブルクォート・改行対応）
+// ───────────────────────────────────────────
+function parseCSV(text) {
+  const rows = [];
+  let row = [], cell = '', inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQ) {
+      if (c === '"' && text[i+1] === '"') { cell += '"'; i++; }
+      else if (c === '"') inQ = false;
+      else cell += c;
+    } else {
+      if (c === '"') inQ = true;
+      else if (c === ',') { row.push(cell.trim()); cell = ''; }
+      else if (c === '\n') { row.push(cell.trim()); rows.push(row); row = []; cell = ''; }
+      else if (c === '\r') {}
+      else cell += c;
+    }
+  }
+  if (cell || row.length) { row.push(cell.trim()); rows.push(row); }
+  return rows;
+}
+
+// ───────────────────────────────────────────
+// Dropbox URL 自動変換（dl=0 → raw=1）
+// ───────────────────────────────────────────
+function toDisplayUrl(url) {
+  if (!url) return '';
+  if (url.includes('dropbox.com')) {
+    return url.replace(/(\?|&)dl=[01]/, '$1raw=1')
+              .replace(/(\?|&)st=[^&]+/g, m => m); // stパラメータはそのまま保持
+  }
+  return url;
+}
+
+// ───────────────────────────────────────────
+// スプレッドシートからデータ読み込み
+// ───────────────────────────────────────────
+async function loadData() {
+  showLoading(true);
+  try {
+    const [r1, r2] = await Promise.all([
+      fetch(SHEET1_URL).then(r => r.text()),
+      fetch(SHEET2_URL).then(r => r.text()),
+    ]);
+
+    // シート1：道具マスター
+    const rows1 = parseCSV(r1);
+    const headers1 = rows1[0]; // 1行目がヘッダー
+    data = rows1.slice(1).filter(r => r[0]).map(r => ({
+      id:       r[headers1.indexOf('管理番号')] || '',
+      cat:      r[headers1.indexOf('分類')]     || '',
+      name:     r[headers1.indexOf('名称（品名）')] || r[headers1.indexOf('名称')] || '',
+      mei:      r[headers1.indexOf('銘')]       || '',
+      artist:   r[headers1.indexOf('作者・窯元')] || '',
+      season:   r[headers1.indexOf('季節・月')] || '',
+      hakogaki: r[headers1.indexOf('箱・書き付け')] || r[headers1.indexOf('箱書き')] || '',
+      location: r[headers1.indexOf('保管場所')] || '',
+      biko:     r[headers1.indexOf('備考')]     || '',
+    }));
+
+    // シート2：写真
+    const rows2 = parseCSV(r2);
+    const headers2 = rows2[0];
+    photoData = rows2.slice(1).filter(r => r[0]).map(r => ({
+      id:    r[headers2.indexOf('管理番号')] || '',
+      type:  r[headers2.indexOf('写真の種類')] || '',
+      order: parseInt(r[headers2.indexOf('順番')] || '99'),
+      url:   r[headers2.indexOf('写真URL')]   || '',
+    }));
+
+    showLoading(false);
+    buildCatFilters();
+    applyFilters();
+  } catch(e) {
+    showLoading(false);
+    document.getElementById('itemGrid').innerHTML =
+      `<div class="empty-state"><div class="icon">⚠️</div><p>データの読み込みに失敗しました。<br>スプレッドシートの公開設定を確認してください。</p></div>`;
+    console.error(e);
+  }
+}
+
+function showLoading(on) {
+  let el = document.getElementById('loadingMsg');
+  if (on) {
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'loadingMsg';
+      el.className = 'empty-state';
+      el.innerHTML = '<div class="icon">🍵</div><p>道具データを読み込んでいます…</p>';
+      document.getElementById('itemGrid').appendChild(el);
+    }
+  } else {
+    if (el) el.remove();
+  }
+}
+
+// ───────────────────────────────────────────
+// 分類フィルターを動的生成
+// ───────────────────────────────────────────
+function buildCatFilters() {
+  const cats = [...new Set(data.map(d => d.cat).filter(Boolean))];
+  const bar = document.getElementById('catFilterBar');
+  // 「すべて」ボタンを残し、あとは動的生成
+  bar.innerHTML = `<button class="filter-btn active" onclick="setCatFilter('all', this)">すべて</button>` +
+    cats.map(c => `<button class="filter-btn" onclick="setCatFilter('${c}', this)">${c}</button>`).join('');
+}
+
+function getPhotos(id) {
+  return photoData
+    .filter(p => p.id === id)
+    .sort((a, b) => a.order - b.order)
+    .map(p => ({ ...p, displayUrl: toDisplayUrl(p.url) }));
+}
+
+const seasonMap = {
+  '春': '炉', '正月': '炉', '1月': '炉', '2月': '炉', '3月': '炉', '4月': '炉',
+  '4月下旬〜6月': '風炉',
+  '夏': '風炉', '5月': '風炉', '6月': '風炉', '7月': '風炉', '8月': '風炉', '9月': '風炉', '10月': '風炉',
+  '秋': '風炉', '夏？': '風炉',
+  'おめでたい時': '通年',
+};
+function getSeasonKind(s) {
+  if (!s) return '';
+  return seasonMap[s] || '';
+}
+
+const icons = { '茶杓': '🥢', '茶碗': '🍵', '茶入': '🏺', '棗': '🫙', '花入': '🌸', '釜': '🫖' };
+
+let currentCat = 'all';
+let currentSeason = 'all';
+
+function applyFilters() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const filtered = data.filter(d => {
+    const matchCat = currentCat === 'all' || d.cat === currentCat;
+    const matchSeason = currentSeason === 'all' || getSeasonKind(d.season) === currentSeason || (currentSeason === '通年' && d.season === 'おめでたい時');
+    const matchSearch = !q || [d.name, d.mei, d.artist, d.id, d.hakogaki].some(v => v && v.toLowerCase().includes(q));
+    return matchCat && matchSeason && matchSearch;
+  });
+  renderGrid(filtered);
+  document.getElementById('countDisp').textContent = filtered.length;
+  document.getElementById('emptyState').style.display = filtered.length === 0 ? 'flex' : 'none';
+}
+
+function renderGrid(items) {
+  const grid = document.getElementById('itemGrid');
+  grid.innerHTML = items.map(d => {
+    const sk = getSeasonKind(d.season);
+    const seasonTag = sk ? `<span class="tag ${sk === '炉' ? 'tag-ro' : sk === '風炉' ? 'tag-furo' : 'tag-season'}">${sk}</span>` : '';
+    const timeTag = d.season ? `<span class="tag tag-season">${d.season}</span>` : '';
+    const mainPhoto = getPhotos(d.id).find(p => p.displayUrl);
+    const photoHtml = mainPhoto
+      ? `<img class="card-photo" src="${mainPhoto.displayUrl}" alt="${d.name}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="card-photo-placeholder" style="display:none">${icons[d.cat] || '🍵'}</div>`
+      : `<div class="card-photo-placeholder">${icons[d.cat] || '🍵'}</div>`;
+    return `<div class="item-card" id="card-${d.id}" onclick="selectItem('${d.id}')">
+      ${photoHtml}
+      <div class="card-body">
+        <div class="card-id">${d.id}</div>
+        <div class="card-name">${d.name || d.mei || '（銘なし）'}</div>
+        <div class="card-mei">${d.mei ? '銘「' + d.mei + '」' : d.artist || ''}</div>
+        <div class="card-tags">
+          <span class="tag tag-cat">${d.cat}</span>
+          ${seasonTag}
+          ${timeTag}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setCatFilter(cat, btn) {
+  currentCat = cat;
+  document.querySelectorAll('#catFilterBar .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function setSeasonFilter(season, btn) {
+  document.querySelectorAll('.season-btn').forEach(b => {
+    b.classList.remove('active-ro', 'active-furo', 'active-all');
+  });
+  if (currentSeason === season) {
+    currentSeason = 'all';
+  } else {
+    currentSeason = season;
+    if (season === '炉') btn.classList.add('active-ro');
+    else if (season === '風炉') btn.classList.add('active-furo');
+    else if (season === '通年') btn.classList.add('active-all');
+  }
+  applyFilters();
+}
+
+function selectItem(id) {
+  const d = data.find(x => x.id === id);
+  if (!d) return;
+
+  document.querySelectorAll('.item-card').forEach(c => c.classList.remove('selected'));
+  const card = document.getElementById('card-' + id);
+  if (card) card.classList.add('selected');
+
+  const sk = getSeasonKind(d.season);
+  document.getElementById('detailId').textContent = d.id;
+  document.getElementById('detailName').textContent = d.name || '（名称未登録）';
+  document.getElementById('detailMei').textContent = d.mei ? '銘「' + d.mei + '」' : '';
+
+  const tagsEl = document.getElementById('detailTags');
+  tagsEl.innerHTML = `<span class="tag tag-lg tag-cat">${d.cat}</span>` +
+    (sk ? `<span class="tag tag-lg ${sk === '炉' ? 'tag-ro' : sk === '風炉' ? 'tag-furo' : 'tag-season'}">${sk}</span>` : '') +
+    (d.season ? `<span class="tag tag-lg tag-season">${d.season}</span>` : '');
+
+  const rows = [
+    ['作者・窯元', d.artist],
+    ['保管場所', d.location],
+  ].filter(r => r[1]);
+  document.getElementById('detailInfo').innerHTML = rows.map(r =>
+    `<div class="detail-row"><div class="detail-key">${r[0]}</div><div class="detail-val">${r[1]}</div></div>`
+  ).join('');
+
+  const hk = document.getElementById('hakogakiSection');
+  if (d.hakogaki) {
+    hk.style.display = '';
+    document.getElementById('detailHakogaki').textContent = d.hakogaki;
+  } else {
+    hk.style.display = 'none';
+  }
+  const bs = document.getElementById('bikoSection');
+  if (d.biko) {
+    bs.style.display = '';
+    document.getElementById('detailBiko').textContent = d.biko;
+  } else {
+    bs.style.display = 'none';
+  }
+
+  // 写真表示（シート2データ使用・Dropbox URL自動変換済み）
+  const photos = getPhotos(d.id);
+  const photosWithUrl = photos.filter(p => p.displayUrl);
+  const icon = icons[d.cat] || '🍵';
+
+  const photosContainer = document.getElementById('detailPhotos');
+  // メイン写真エリアを再構築
+  const oldMain = document.getElementById('detailMainPhoto');
+  if (photosWithUrl.length > 0) {
+    // img要素として差し替え
+    const img = document.createElement('img');
+    img.id = 'detailMainPhoto';
+    img.className = 'detail-main-photo';
+    img.src = photosWithUrl[0].displayUrl;
+    img.alt = photosWithUrl[0].type;
+    img.onerror = function() {
+      this.style.display = 'none';
+    };
+    oldMain.replaceWith(img);
+  } else {
+    const div = document.createElement('div');
+    div.id = 'detailMainPhoto';
+    div.className = 'detail-main-placeholder';
+    div.textContent = icon;
+    oldMain.replaceWith(div);
+  }
+
+  const thumbsEl = document.getElementById('detailThumbs');
+  if (photosWithUrl.length > 0) {
+    thumbsEl.innerHTML = photosWithUrl.map((p, i) => {
+      const label = p.type;
+      return `<img class="thumb ${i===0?'active':''}" src="${p.displayUrl}" title="${label}" data-src="${p.displayUrl}" data-idx="${i}">`;
+    }).join('');
+    // サムネイルクリックでメイン写真を切り替え
+    thumbsEl.querySelectorAll('.thumb').forEach((t) => {
+      t.onerror = function() { this.style.opacity = '0.3'; };
+      t.addEventListener('click', function() {
+        const src = this.getAttribute('data-src');
+        const mainImg = document.getElementById('detailMainPhoto');
+        mainImg.src = src;
+        thumbsEl.querySelectorAll('.thumb').forEach(x => x.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  } else {
+    thumbsEl.innerHTML = ['正面','裏面','箱'].map((l, i) =>
+      `<div class="thumb ${i===0?'active':''}" title="${l}">${icon}</div>`
+    ).join('');
+  }
+
+  const pane = document.getElementById('detailPane');
+  pane.classList.remove('hidden');
+}
+
+function closeDetail() {
+  document.getElementById('detailPane').classList.add('hidden');
+  document.querySelectorAll('.item-card').forEach(c => c.classList.remove('selected'));
+}
+
+// Init：スプレッドシートからデータ読み込み
+loadData();
+</script>
+</body>
+</html>
